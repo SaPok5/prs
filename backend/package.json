@@ -3,8 +3,8 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
-    "start": "node ./dist/src/index.js",
-    "dev": "nodemon ./dist/src/index.js",
+    "start": "node ./dist/index.js",
+    "dev": "nodemon ./dist/index.js",
     "build": "tsc",
     "prisma": "npx prisma db push",
     "watch": "npx tsc -w",

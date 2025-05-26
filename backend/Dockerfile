@@ -1,5 +1,8 @@
 # Stage 1: Build the application
-FROM node:20-alpine AS builder
+FROM node:20-slim AS builder
+
+# Install OpenSSL and dev libraries for Prisma
+RUN apt-get update && apt-get install -y --no-install-recommends openssl libssl-dev && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /usr/src/app
 
@@ -19,7 +22,10 @@ RUN npm run build
 RUN npm prune --production
 
 # Stage 2: Production image
-FROM node:20-alpine
+FROM node:20-slim
+
+# Install OpenSSL runtime libraries for Prisma
+RUN apt-get update && apt-get install -y --no-install-recommends openssl libssl3 && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /usr/src/app
 
