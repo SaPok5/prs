@@ -1,0 +1,27 @@
+version: "3.4"
+
+services:
+  mysql:
+    container_name: payment-record-system-sql
+    image: mysql
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: paymentrecordsystem
+      MYSQL_DATABASE: prs
+
+  app:
+    build:
+      context: .
+    ports:
+      - "8000:8000"
+    environment:
+      DATABASE_URL: "mysql://root:paymentrecordsystem@mysql:3306/prs"
+    depends_on:
+      - mysql
+
+volumes:
+  mysql_data:
+#
