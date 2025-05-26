@@ -7,7 +7,8 @@
     "dev": "nodemon ./dist/src/index.js",
     "build": "tsc",
     "prisma": "npx prisma db push",
-    "watch": "npx tsc -w"
+    "watch": "npx tsc -w",
+    "postinstall": "prisma generate"
   },
   "keywords": [],
   "author": "",
