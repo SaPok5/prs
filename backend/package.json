@@ -5,6 +5,7 @@
   "scripts": {
     "start": "node ./dist/src/index.js",
     "dev": "nodemon ./dist/src/index.js",
+    "postinstall": "npm install --save-dev @types/node",
     "build": "tsc",
     "prisma": "npx prisma db push",
     "watch": "npx tsc -w"
