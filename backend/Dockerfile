@@ -14,6 +14,8 @@ COPY . .
 # The postinstall script 'prisma generate' will run here and find schema.prisma
 RUN npm install
 
+RUN npx prisma generate
+
 # Build the TypeScript project
 RUN npm run build
 

@@ -15,6 +15,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 
+// Validation Schemas
 const validationSchema = Yup.object({
   organizationName: Yup.string()
     .required("Organization Name is required")
@@ -41,15 +42,16 @@ const RegisterOrganization = () => {
   const navigate = useNavigate();
   const tempEmail = localStorage.getItem("tempEmail");
   const [showVerification, setShowVerification] = useState(false);
-  const [registerOrg, { loading }] = useMutation(REGISTER_ORG);
-  const [verifyRegistrationOtp,{loading:verificationLoading}] = useMutation(VERIFY_REGISTRATION_OTP)
 
+  const [registerOrg, { loading }] = useMutation(REGISTER_ORG);
+  const [verifyRegistrationOtp, { loading: verificationLoading }] = useMutation(VERIFY_REGISTRATION_OTP);
+
+  // Show verification if temp email exists
   useEffect(() => {
-    if (tempEmail) {
-      setShowVerification(true);
-    }
+    if (tempEmail) setShowVerification(true);
   }, [tempEmail]);
 
+  // OTP Formik
   const verificationFormik = useFormik({
     initialValues: {
       verificationCode: "",
@@ -58,26 +60,32 @@ const RegisterOrganization = () => {
     onSubmit: async (values) => {
       try {
         const response = await verifyRegistrationOtp({
-            variables: {
-                input:{
-                    email: tempEmail,
-                    otp: values.verificationCode
-                }
+          variables: {
+            input: {
+              email: tempEmail,
+              otp: values.verificationCode
             }
-        })
-
-        if (response.data.verifyOrganizationRegistrationOtp.success) {
-            localStorage.removeItem("tempEmail");
-            setShowVerification(false);
-            alert("registration success")
-            navigate("/organizationLogin");
           }
+        });
+
+        const verifyData = response?.data?.verifyOrganizationRegistrationOtp;
+
+        if (verifyData?.success) {
+          localStorage.removeItem("tempEmail");
+          setShowVerification(false);
+          alert("Registration successful!");
+          navigate("/organizationLogin");
+        } else {
+          alert(verifyData?.message || "Verification failed.");
+        }
       } catch (error) {
         console.error("Verification error:", error);
+        alert("An error occurred during verification.");
       }
     },
   });
-  
+
+  // Main Registration Formik
   const formik = useFormik({
     initialValues: {
       organizationName: "",
@@ -95,15 +103,20 @@ const RegisterOrganization = () => {
             password: values.password
           }
         });
-        console.log(response.data.registerOrganization.success, "RESP");
-        console.log(response.data.registerOrganization, "RESP clg");
 
-        if (response.data.registerOrganization.success) {
+        console.log("GraphQL response:", response);
+
+        const registerData = response?.data?.registerOrganization;
+
+        if (registerData?.success) {
           localStorage.setItem("tempEmail", values.email);
           setShowVerification(true);
+        } else {
+          alert(registerData?.message || "Registration failed.");
         }
       } catch (error) {
         console.error("Registration error:", error);
+        alert("An error occurred during registration.");
       }
     }
   });
@@ -198,16 +211,14 @@ const RegisterOrganization = () => {
           </form>
 
           <div className="text-center mt-4">
-            <Link 
-              to="/organizationLogin" 
-              className="text-sm text-gray-600 hover:text-gray-900 font-medium"
-            >
+            <Link to="/organizationLogin" className="text-sm text-gray-600 hover:text-gray-900 font-medium">
               Already have an account? Login here
             </Link>
           </div>
         </div>
       </div>
 
+      {/* OTP Verification Dialog */}
       <Dialog open={showVerification} onOpenChange={setShowVerification}>
         <DialogContent>
           <DialogHeader>
@@ -232,8 +243,8 @@ const RegisterOrganization = () => {
               )}
             </div>
             <div className="flex justify-end space-x-2">
-              <Button type="submit" disabled={!verificationFormik.isValid || !verificationFormik.dirty}>
-               { verificationLoading ? "Verifying"  :"Verify"}
+              <Button type="submit" disabled={!verificationFormik.isValid || !verificationFormik.dirty || verificationLoading}>
+                {verificationLoading ? "Verifying..." : "Verify"}
               </Button>
             </div>
           </form>

@@ -1,16 +1,18 @@
 version: "3.4"
 
 services:
-  mysql:
-    container_name: payment-record-system-sql
-    image: mysql
-    ports:
-      - "3306:3306"
-    volumes:
-      - mysql_data:/var/lib/mysql
+  postgres:
+    container_name: payment-record-system-postgres
+    image: postgres:15-alpine # Using a specific version, alpine for smaller size
+    restart: always
     environment:
-      MYSQL_ROOT_PASSWORD: paymentrecordsystem
-      MYSQL_DATABASE: prs
+      POSTGRES_USER: people # Replace with your desired user
+      POSTGRES_PASSWORD: pNEi4MgWQwAOU9kk3T0Z18m7WPBVdSGR # Replace with your desired password
+      POSTGRES_DB: prs
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
 
   app:
     build:
@@ -18,10 +20,10 @@ services:
     ports:
       - "8000:8000"
     environment:
-      DATABASE_URL: "mysql://root:paymentrecordsystem@mysql:3306/prs"
+      DATABASE_URL: "postgresql://people:pNEi4MgWQwAOU9kk3T0Z18m7WPBVdSGR@dpg-d0pvq4muk2gs73a36kl0-a.oregon-postgres.render.com/prs"
     depends_on:
-      - mysql
+      - postgres
 
 volumes:
-  mysql_data:
+  postgres_data:
 #
