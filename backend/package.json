@@ -9,7 +9,7 @@
     "prisma": "npx prisma db push",
     "watch": "npx tsc -w",
     "build": "tsc",
-    "dev": "npx nodemon dist/index.js"
+    "dev": "npx nodemon dist/src/index.js"
   },
   "keywords": [],
   "author": "",
