@@ -172,7 +172,7 @@ export const userLogin = async (args: LoginInputType) => {
   if (!isValidPassword)
     return { status: { success: false, message: "Invalid email or password" } };
 
-  const roleName = user.role[0].role.roleName || null;
+  const roleName = (user.role && user.role.length > 0 && user.role[0] && user.role[0].role) ? user.role[0].role.roleName : null;
   const token = jwt.sign(
     { userId: user.id, role: roleName },
     process.env.JWT_LOGIN_SECRET,
