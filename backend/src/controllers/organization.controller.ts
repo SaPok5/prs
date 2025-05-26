@@ -9,6 +9,7 @@ import { initalData } from "../services/organizationInitalData.service.js";
 
 // Registering Organization
 export const registerOrganization = async (args: OrganizationType) => {
+  console.log("Controller registerOrganization received args:", JSON.stringify(args)); // Log incoming arguments
   try {
     const { email, password, organizationName } = args;
   if (!email || !password || !organizationName)
@@ -51,7 +52,11 @@ export const registerOrganization = async (args: OrganizationType) => {
     message: `OTP has been sent to your email: ${email}`,
   };
   } catch (error) {
-    console.log(error)
+    console.error("Error in registerOrganization controller:", error);
+    return { 
+      success: false, 
+      message: error.message || "An unexpected error occurred during registration. Please check server logs."
+    }; 
   }
 };
 
