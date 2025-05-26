@@ -98,9 +98,9 @@ const RegisterOrganization = () => {
       try {
         const response = await registerOrg({
           variables: {
-            organizationName: values.organizationName,
             email: values.email,
-            password: values.password
+            password: values.password,
+            organizationName: values.organizationName
           }
         });
 
